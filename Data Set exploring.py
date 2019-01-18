@@ -1,9 +1,3 @@
-
-# coding: utf-8
-
-# In[30]:
-
-
 import pandas as pd
 import numpy as np 
 
@@ -33,6 +27,150 @@ crash_columns_todrop= ['Accident Month','Accident Day','Accident Year','Day','Da
 #yay it worked.
 
 crash_Df.drop(columns=crash_columns_todrop,inplace=True)
-dfgroup= crash_Df.groupby('DateDDMMYYYY').groups
+
+crash_Df.head(5)#lets see if it dropped the columns\
+
+
+# In[108]:
+
+
+dfgroup= crash_Df.groupby('DateDDMMYYYY')
+#dfgroup.size().max()
+#maxval= dfgroup
+
+dfgroup.size().sort_values(ascending=False)
+
+
+# In[109]:
+
+
+weather_Df['EST'].is_unique
+weather_Df.set_index('EST')
+weather_Df.head(5)
+
+#accessing row based on column valuse:
+weather_Df.loc[weather_Df['EST'] == '1/31/2013']
+
+weather_Df.columns
+#based on columns questions could be asked are, which days was extremely windy? 
+#which days visibility was poor?
+#dfgroupbla = dfgroup['weight'].mean()
 #now what I want to do is to check inside each group
+
+
+# In[110]:
+
+
+issues_Df.head(5)
+issues_Df.columns
+
+
+min(crash_Df['DateDDMMYYYY'])#1/1/2013
+max(crash_Df['DateDDMMYYYY'])#9/9/2013
+
+min(weather_Df['EST'])#'1/1/2013'
+max(weather_Df['EST'])#'9/9/2013'
+
+min(issues_Df['ticket_created_date_time'])#'01/01/2015 05:14:49 PM'
+max(issues_Df['ticket_created_date_time'])#'12/31/2015 12:02:03 PM'
+
+#after getting max and min of date columns noticed that issues is not connected to other two! so I need to dig into crash and
+#weather. about issues_Df i can check dataset itself to see what can I get from it.
+
+
+# In[111]:
+
+
+#weather_Df.loc[('1/30/2013'< weather_Df['EST'] < '2/01/2013')]
+#mask = (weather_Df['EST'] >= '1/30/2013') & (weather_Df['EST'] < '2/01/2013')
+#weather_Df.loc[mask]
+weather_Df.sort_values(by=['EST'], ascending=True)
+
+weather_Df.columns #Min VisibilityMiles
+weather_Df[' Mean VisibilityMiles'].min()
+weather_Df.sort_values(by=[' Mean VisibilityMiles'], ascending=True)
+
+weather_Df.columns
+#weather_Df.columns remove spaces from columns names
+
+
+# In[112]:
+
+
+crash_Df['DateDDMMYYYY'] = pd.to_datetime(crash_Df['DateDDMMYYYY'])
+crash_Df.head(5)
+crash_Df.rename(columns={'DateDDMMYYYY': 'IndexDate'},inplace = True)
+crash_Df
+weather_Df.head(5)
+weather_Df['EST']=pd.to_datetime(weather_Df['EST'])
+weather_Df.rename(columns={'EST': 'IndexDate'},inplace = True)
+weather_Df.head(5)
+weather_Df.set_index('IndexDate',inplace=True)
+crash_Df.set_index('IndexDate',inplace=True)
+weather_Df.head(5)
+
+
+# In[113]:
+
+
+
+#merge them 
+merge_Df= pd.merge(left=crash_Df, right=weather_Df,left_index=True, right_index=True, how="inner")
+merge_Df.head(5)
+mergGroups = merge_Df.groupby('IndexDate')
+mergGroups.groups
+mergGroups.size()
+#time to draw a plot
+merge_Df.columns
+merge_Df['Road Conditions']
+roadCond_groups = merge_Df.groupby('Road Conditions')
+roadCond_groups.groups
+roadCond_groups.size() #surprisingly when it is dry we have more accidents 
+#after this line noticed that I need to make format of all dates same, like with zeros
+#I googled alot but couldnot get any successful result
+#yaaaay found an answer 
+#it is important that to come to conclusion, all these datasets should be in same date range, unless we want to 
+
+
+# In[116]:
+
+
+#lets limit our data set to 1/1/2013 and 9/9/2013 <=== Actually no need for this because we already merged datasets 
+test_Df = weather_Df
+weatherTest= pd.read_csv('C:/Users/Mahsa/Desktop/data science/ann/2013-AnnArbor-WeatherStats.txt', sep=',')
+weatherTest.head(3)
+weatherTest['EST']= pd.to_datetime(weatherTest['EST'])
+weatherTest.head(3)
+
+
+weatherTest['EST'].min()
+weatherTest['EST'].max()
+
+
+# In[117]:
+
+
+#Now it is time for playing with some plotting 
+
+
+# In[118]:
+
+
+#and questions like which day had the most crash and why 
+
+
+# In[119]:
+
+
+#what are the axis of the plot, weather , degree and crash?? dry and wet bar chart?? no first ask a questionm
+merge_Df.columns #time of day is good, see which hours mostly crash happens (it is more like prove :D )
+#which highway mostly crash happens (maybe it needs a repair)
+#what is the weather column :)))
+#which crash type happens in which weather
+#don't see a need for crash type: 
+#interesting GPS Coordinat
+#to make sure merged dataset is within the specified date range, test
+#which of the weathers result in fatal crash??
+#what is events column?
+#trim column names!
 
