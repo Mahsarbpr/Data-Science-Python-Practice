@@ -50,7 +50,7 @@ weather_Df.head(5)
 
 #accessing row based on column valuse:
 weather_Df.loc[weather_Df['EST'] == '1/31/2013']
-
+weather_Df.columns=weather_Df.columns.str.strip()
 weather_Df.columns
 #based on columns questions could be asked are, which days was extremely windy? 
 #which days visibility was poor?
@@ -87,8 +87,8 @@ max(issues_Df['ticket_created_date_time'])#'12/31/2015 12:02:03 PM'
 weather_Df.sort_values(by=['EST'], ascending=True)
 
 weather_Df.columns #Min VisibilityMiles
-weather_Df[' Mean VisibilityMiles'].min()
-weather_Df.sort_values(by=[' Mean VisibilityMiles'], ascending=True)
+weather_Df['Mean VisibilityMiles'].min()
+weather_Df.sort_values(by=['Mean VisibilityMiles'], ascending=True)
 
 weather_Df.columns
 #weather_Df.columns remove spaces from columns names
@@ -174,3 +174,29 @@ merge_Df.columns #time of day is good, see which hours mostly crash happens (it 
 #what is events column?
 #trim column names!
 
+highwayGroups= merge_Df.groupby('Highway Number')
+highwayGroups.size()
+
+timeGroups = merge_Df.groupby('Time Of Day')
+timeGroups.size() #todo: it is a good practice to parse time of day and then categorize based on morning afternoon and night!!
+
+weatherGroups= merge_Df.groupby('Weather')
+weatherGroups.size()
+
+merge_Df['Crash: Fatal Crash']
+fatalGroups = merge_Df.groupby('Crash: Fatal Crash')
+fatalGroups.size()
+
+gpsGroups = merge_Df.groupby(['Gps X Coordinate', 'Gps Y Coordinate'])
+gpsGroups.size().max() # which coordinate is this that has maximum crashes
+
+eventGroups = merge_Df.groupby('Events')
+eventGroups.size() #well this is little bit surprising if we compare it to the weather
+
+#how to say among fatals how percent of them was snow weather!!
+#merge_Df['IndexDate'].min()
+crash_Df.groupby('IndexDate').size() #I thought with inner join I should get only date range between 1-1-2013 and 9-9-2013????
+
+#how to get index between date Range
+#slicedMerge = merge_Df.iloc['2013-01-01' : '2013-09-09'  ]
+#slicedMerge['IndexDate']
