@@ -1,6 +1,12 @@
+
+# coding: utf-8
+
+# In[1]:
+
+
 import pandas as pd
 import numpy as np 
-
+import matplotlib.pyplot as plt
 weather_Df = pd.read_csv('C:/Users/Mahsa/Desktop/data science/ann/2013-AnnArbor-WeatherStats.txt', sep=',')
 weather_Df.head(3)
 
@@ -174,6 +180,11 @@ merge_Df.columns #time of day is good, see which hours mostly crash happens (it 
 #what is events column?
 #trim column names!
 
+
+
+# In[2]:
+
+
 highwayGroups= merge_Df.groupby('Highway Number')
 highwayGroups.size()
 
@@ -200,3 +211,177 @@ crash_Df.groupby('IndexDate').size() #I thought with inner join I should get onl
 #how to get index between date Range
 #slicedMerge = merge_Df.iloc['2013-01-01' : '2013-09-09'  ]
 #slicedMerge['IndexDate']
+
+#how to plot groupby result
+#merge_Df.plot.line(x='Time Of Day', y='Weather')
+#axes = merge_Df.plot.line(x='Time Of Day', y='Weather')
+#merge_Df['Weather'].plot()
+
+
+# In[11]:
+
+
+import matplotlib.pyplot as plt
+#merge_Df.plot(x='Mean Wind SpeedMPH',y='Mean VisibilityMiles',kind='scatter')
+#merge_Df[['Mean Wind SpeedMPH']].plot().scatter
+##plt.scatter(merge_Df['Time Of Day'], merge_Df['Crash: Fatal Crash'])
+#plt.show()
+#numerics = ['int16', 'int32', 'int64', 'float16', 'float32', 'float64']
+#newdf = merge_Df.select_dtypes(include=numerics)
+#,'Mean Wind SpeedMPH'
+#newdf.columns
+
+gpsGroups.size().plot()
+#weatherGroups[['Gps X Coordinate', 'Gps Y Coordinate']].corr()
+gpsGroups.size().max()
+gpsGroups.filter(lambda x: x.count()>45)
+
+
+# In[12]:
+
+
+import matplotlib.pyplot as plt
+merge_Df.plot(x='Mean Wind SpeedMPH',y='Mean VisibilityMiles')
+merge_Df[['Mean Wind SpeedMPH']].plot()
+#plt.scatter(merge_Df['Time Of Day'], merge_Df['Crash: Fatal Crash'])
+plt.show()
+numerics = ['int16', 'int32', 'int64', 'float16', 'float32', 'float64']
+newdf = merge_Df.select_dtypes(include=numerics)
+#,'Mean Wind SpeedMPH'
+newdf.columns
+
+
+# In[13]:
+
+
+
+eventGroups.count()['Time Of Day']
+fig, ax = plt.subplots(figsize=(15,7))
+gpsGroups.count()['Time Of Day'].plot(ax=ax)
+
+#fig, ax = plt.subplots(figsize=(15,7))
+# use unstack()
+#gpsGroups.count()['Time Of Day'].unstack().plot(ax=ax)
+
+
+# In[14]:
+
+
+
+dayGroups= merge_Df.groupby('IndexDate')
+dayGroups.size()
+fig, ax = plt.subplots(figsize=(15,7))
+dayGroups.count()['Time Of Day'].plot(ax=ax)
+
+
+# In[15]:
+
+
+
+crashdayGroup= crash_Df.groupby('IndexDate')
+fig, ax = plt.subplots(figsize=(15,7))
+crashdayGroup.count()['Weather'].plot(ax=ax)
+
+
+# In[29]:
+
+
+
+fig, ax = plt.subplots(figsize=(15,7))
+weatherGroups.count()['Time Of Day'].unstack().plot(ax=ax)
+#ask in stack overflow
+
+
+# In[17]:
+
+
+weatherGroups['Time Of Day'].size()
+
+
+# In[18]:
+
+
+weatherGroups['Time Of Day'].count()
+
+
+# In[19]:
+
+
+weather_Df.corr()
+
+
+# In[20]:
+
+
+monthgroups= merge_Df.groupby(['Month','Weather'])
+monthgroups.size()
+
+
+# In[21]:
+
+
+fig, ax = plt.subplots(figsize=(15,7))
+monthgroups.count()['Time Of Day'].unstack().plot(ax=ax)
+
+
+# In[22]:
+
+
+gpsweathergroups= merge_Df.groupby(['Gps X Coordinate', 'Gps Y Coordinate','Weather'])
+gpsweathergroups.size()
+
+
+# In[23]:
+
+
+fig, ax = plt.subplots(figsize=(15,7))
+gpsweathergroups.count()['Time Of Day'].unstack().plot(ax=ax)
+
+
+# In[24]:
+
+
+merge_Df.columns
+
+
+# In[25]:
+
+
+dayweathergroups=merge_Df.groupby(['Day Of Week', 'Weather'])
+dayweathergroups.size()
+
+fig, ax = plt.subplots(figsize=(15,7))
+dayweathergroups.count()['Time Of Day'].unstack().plot(ax=ax)
+#need to show monday, friday and etc on the plot
+
+
+# In[26]:
+
+
+dayweathergroups=merge_Df.groupby(['Weather','Day Of Week'])
+dayweathergroups.size()
+
+#thanks to https://scentellegher.github.io/programming/2017/07/15/pandas-groupby-multiple-columns-plot.html finally I plotted groupbys
+
+fig, ax = plt.subplots(figsize=(15,7))
+dayweathergroups.count()['Time Of Day'].unstack().plot(ax=ax) #it is important which column is first at groupby
+
+
+# In[27]:
+
+
+#now what can I select instead of gps x and gps y, because values of these two are too detailed that you can make decision only
+#for the amounts that are too high or too low.
+
+crashweathergroups= merge_Df.groupby(['Crash Type','Weather'])
+crashweathergroups.size()
+fig, ax = plt.subplots(figsize=(15,7))
+crashweathergroups.count()['Time Of Day'].unstack().plot(ax=ax)
+
+
+# In[28]:
+
+
+citymonthgroups= merge_Df.groupby(['County','Month'])
+citymonthgroups.size()
+
